@@ -19,8 +19,6 @@ namespace pcmplayer
     {
         samples = s;
         start();
-
-        for (;;) {}
     }
 
     void AudioDevice::getData(uint32_t frames, std::vector<float>& result)

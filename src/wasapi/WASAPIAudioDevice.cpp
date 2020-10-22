@@ -115,6 +115,8 @@ namespace pcmplayer::wasapi
                              std::uint16_t initChannels):
         pcmplayer::AudioDevice(Driver::wasapi, initBufferSize, initSampleRate, initSampleFormat, initChannels)
     {
+        CoInitialize(nullptr);
+
         LPVOID enumeratorPointer;
         if (const auto hr = CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_ALL, IID_IMMDeviceEnumerator, &enumeratorPointer); FAILED(hr))
             throw std::system_error(hr, errorCategory, "Failed to create device enumerator");
@@ -165,8 +167,8 @@ namespace pcmplayer::wasapi
 
         WAVEFORMATEX* closesMatch;
         if (!FAILED(audioClient->IsFormatSupported(AUDCLNT_SHAREMODE_SHARED,
-                                                    &waveFormat,
-                                                    &closesMatch)))
+                                                   &waveFormat,
+                                                   &closesMatch)))
         {
             // TODO: implement
         }
@@ -174,11 +176,11 @@ namespace pcmplayer::wasapi
         CoTaskMemFree(closesMatch);
 
         if (const auto floatResult = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                                                streamFlags,
-                                                                bufferPeriod,
-                                                                0,
-                                                                &waveFormat,
-                                                                nullptr); FAILED(floatResult))
+                                                             streamFlags,
+                                                             bufferPeriod,
+                                                             0,
+                                                             &waveFormat,
+                                                             nullptr); FAILED(floatResult))
         {
             waveFormat.wFormatTag = WAVE_FORMAT_PCM;
             waveFormat.wBitsPerSample = sizeof(std::int16_t) * 8;
@@ -186,11 +188,11 @@ namespace pcmplayer::wasapi
             waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
 
             if (const auto pcmResult = audioClient->Initialize(AUDCLNT_SHAREMODE_SHARED,
-                                                                streamFlags,
-                                                                bufferPeriod,
-                                                                0,
-                                                                &waveFormat,
-                                                                nullptr); FAILED(pcmResult))
+                                                               streamFlags,
+                                                               bufferPeriod,
+                                                               0,
+                                                               &waveFormat,
+                                                               nullptr); FAILED(pcmResult))
                 throw std::system_error(pcmResult, errorCategory, "Failed to initialize audio client");
 
             sampleFormat = SampleFormat::signedInt16;
@@ -233,6 +235,7 @@ namespace pcmplayer::wasapi
 
         started = true;
         running = true;
+        run();
     }
 
     void AudioDevice::stop()

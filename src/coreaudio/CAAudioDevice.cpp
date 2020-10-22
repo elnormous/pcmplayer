@@ -318,6 +318,8 @@ namespace pcmplayer::coreaudio
         OSStatus result;
         if ((result = AudioOutputUnitStart(audioUnit)) != noErr)
             throw std::system_error(result, errorCategory, "Failed to start CoreAudio output unit");
+        
+        for (;;) {}
     }
 
     void AudioDevice::stop()
