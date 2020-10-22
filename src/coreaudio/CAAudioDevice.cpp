@@ -67,10 +67,10 @@ namespace pcmplayer::coreaudio
         }
     }
 
-    AudioDevice::AudioDevice(uint32_t initBufferSize,
-                             uint32_t initSampleRate,
+    AudioDevice::AudioDevice(std::uint32_t initBufferSize,
+                             std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
-                             uint16_t initChannels):
+                             std::uint16_t initChannels):
         pcmplayer::AudioDevice(Driver::coreAudio, initBufferSize, initSampleRate, initSampleFormat, initChannels)
     {
         OSStatus result;
@@ -95,7 +95,7 @@ namespace pcmplayer::coreaudio
         }
 
         if (channels > maxChannelCount)
-            channels = static_cast<uint16_t>(maxChannelCount);
+            channels = static_cast<std::uint16_t>(maxChannelCount);
 #elif TARGET_OS_MAC
         constexpr AudioObjectPropertyAddress deviceListAddress = {
             kAudioHardwarePropertyDevices,
@@ -169,7 +169,7 @@ namespace pcmplayer::coreaudio
             else
             {
                 const CFIndex stringLength = CFStringGetLength(tempStringRef);
-                std::vector<char> temp(static_cast<size_t>(CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8)) + 1);
+                std::vector<char> temp(static_cast<std::size_t>(CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8)) + 1);
                 if (CFStringGetCString(tempStringRef, temp.data(), static_cast<CFIndex>(temp.size()), kCFStringEncodingUTF8))
                     name = temp.data();
             }
@@ -237,7 +237,7 @@ namespace pcmplayer::coreaudio
             // std::cerr << "Failed to set CoreAudio unit stream format to float, error: " << result;
 
             streamDescription.mFormatFlags = kLinearPCMFormatFlagIsPacked | kAudioFormatFlagIsSignedInteger;
-            streamDescription.mBitsPerChannel = sizeof(int16_t) * 8;
+            streamDescription.mBitsPerChannel = sizeof(std::int16_t) * 8;
             streamDescription.mBytesPerFrame = streamDescription.mBitsPerChannel * streamDescription.mChannelsPerFrame / 8;
             streamDescription.mBytesPerPacket = streamDescription.mBytesPerFrame * streamDescription.mFramesPerPacket;
 
@@ -247,7 +247,7 @@ namespace pcmplayer::coreaudio
                 throw std::system_error(result, errorCategory, "Failed to set CoreAudio unit stream format");
 
             sampleFormat = SampleFormat::SignedInt16;
-            sampleSize = sizeof(int16_t);
+            sampleSize = sizeof(std::int16_t);
         }
 
         AURenderCallbackStruct callback;

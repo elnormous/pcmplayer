@@ -18,10 +18,10 @@ namespace pcmplayer::coreaudio
     class AudioDevice: public pcmplayer::AudioDevice
     {
     public:
-        AudioDevice(uint32_t initBufferSize,
-                    uint32_t initSampleRate,
+        AudioDevice(std::uint32_t initBufferSize,
+                    std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
-                    uint16_t initChannels);
+                    std::uint16_t initChannels);
         ~AudioDevice();
 
         void start() final;
@@ -36,7 +36,7 @@ namespace pcmplayer::coreaudio
         AudioComponent audioComponent = nullptr;
         AudioUnit audioUnit = nullptr;
 
-        uint32_t sampleSize = 0;
+        std::uint32_t sampleSize = 0;
         std::vector<float> data;
     };
 }
