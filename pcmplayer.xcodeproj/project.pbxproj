@@ -7,7 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		303E8771251B17C0008B7E24 /* AudioDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 303E876D251B17BF008B7E24 /* AudioDevice.cpp */; };
+		303E8778251B1C31008B7E24 /* CAAudioDevice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 303E8776251B1C31008B7E24 /* CAAudioDevice.cpp */; };
+		303E877D251B1CE6008B7E24 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303E877C251B1CE6008B7E24 /* CoreAudio.framework */; };
+		303E8780251B1CFB008B7E24 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303E877F251B1CFB008B7E24 /* AudioUnit.framework */; };
+		303E8783251B1D09008B7E24 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 303E8782251B1D09008B7E24 /* CoreFoundation.framework */; };
 		304C0E55251447F500E831F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 304C0E54251447F500E831F2 /* main.cpp */; };
+		308BDB0D253D22B2009DB683 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 308BDB0C253D22B2009DB683 /* main.cpp */; };
+		308BDB19253D2542009DB683 /* WavTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 308BDB18253D2542009DB683 /* WavTest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -20,15 +27,47 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		308BDAFF253D2289009DB683 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		303E876D251B17BF008B7E24 /* AudioDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDevice.cpp; sourceTree = "<group>"; };
+		303E876E251B17BF008B7E24 /* AudioDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = AudioDevice.hpp; sourceTree = "<group>"; };
+		303E876F251B17BF008B7E24 /* SampleFormat.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SampleFormat.hpp; sourceTree = "<group>"; };
+		303E8770251B17BF008B7E24 /* Driver.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Driver.hpp; sourceTree = "<group>"; };
+		303E8776251B1C31008B7E24 /* CAAudioDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CAAudioDevice.cpp; sourceTree = "<group>"; };
+		303E8777251B1C31008B7E24 /* CAAudioDevice.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CAAudioDevice.hpp; sourceTree = "<group>"; };
+		303E877C251B1CE6008B7E24 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		303E877F251B1CFB008B7E24 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		303E8782251B1D09008B7E24 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		304A5B2A2536875900D4E9E3 /* Wav.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Wav.hpp; sourceTree = "<group>"; };
 		304C0E4A251447CB00E831F2 /* pcmplayer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = pcmplayer; sourceTree = BUILT_PRODUCTS_DIR; };
 		304C0E54251447F500E831F2 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		308BDB01253D2289009DB683 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		308BDB0C253D22B2009DB683 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		308BDB18253D2542009DB683 /* WavTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WavTest.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		304C0E47251447CB00E831F2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				303E8780251B1CFB008B7E24 /* AudioUnit.framework in Frameworks */,
+				303E877D251B1CE6008B7E24 /* CoreAudio.framework in Frameworks */,
+				303E8783251B1D09008B7E24 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		308BDAFE253D2289009DB683 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -38,11 +77,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		303E8775251B1C31008B7E24 /* coreaudio */ = {
+			isa = PBXGroup;
+			children = (
+				303E8776251B1C31008B7E24 /* CAAudioDevice.cpp */,
+				303E8777251B1C31008B7E24 /* CAAudioDevice.hpp */,
+			);
+			path = coreaudio;
+			sourceTree = "<group>";
+		};
+		303E877B251B1CE6008B7E24 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				303E8782251B1D09008B7E24 /* CoreFoundation.framework */,
+				303E877F251B1CFB008B7E24 /* AudioUnit.framework */,
+				303E877C251B1CE6008B7E24 /* CoreAudio.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		304C0E41251447CB00E831F2 = {
 			isa = PBXGroup;
 			children = (
-				304C0E4C251447CB00E831F2 /* src */,
+				303E877B251B1CE6008B7E24 /* Frameworks */,
 				304C0E4B251447CB00E831F2 /* Products */,
+				304C0E4C251447CB00E831F2 /* src */,
+				308BDB02253D2289009DB683 /* test */,
 			);
 			sourceTree = "<group>";
 		};
@@ -50,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				304C0E4A251447CB00E831F2 /* pcmplayer */,
+				308BDB01253D2289009DB683 /* test */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -57,9 +118,24 @@
 		304C0E4C251447CB00E831F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				303E8775251B1C31008B7E24 /* coreaudio */,
+				303E876D251B17BF008B7E24 /* AudioDevice.cpp */,
+				303E876E251B17BF008B7E24 /* AudioDevice.hpp */,
+				303E8770251B17BF008B7E24 /* Driver.hpp */,
 				304C0E54251447F500E831F2 /* main.cpp */,
+				303E876F251B17BF008B7E24 /* SampleFormat.hpp */,
+				304A5B2A2536875900D4E9E3 /* Wav.hpp */,
 			);
 			path = src;
+			sourceTree = "<group>";
+		};
+		308BDB02253D2289009DB683 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				308BDB0C253D22B2009DB683 /* main.cpp */,
+				308BDB18253D2542009DB683 /* WavTest.cpp */,
+			);
+			path = test;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -82,6 +158,23 @@
 			productReference = 304C0E4A251447CB00E831F2 /* pcmplayer */;
 			productType = "com.apple.product-type.tool";
 		};
+		308BDB00253D2289009DB683 /* test */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 308BDB05253D2289009DB683 /* Build configuration list for PBXNativeTarget "test" */;
+			buildPhases = (
+				308BDAFD253D2289009DB683 /* Sources */,
+				308BDAFE253D2289009DB683 /* Frameworks */,
+				308BDAFF253D2289009DB683 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = test;
+			productName = test;
+			productReference = 308BDB01253D2289009DB683 /* test */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -93,6 +186,9 @@
 				TargetAttributes = {
 					304C0E49251447CB00E831F2 = {
 						CreatedOnToolsVersion = 11.7;
+					};
+					308BDB00253D2289009DB683 = {
+						CreatedOnToolsVersion = 12.0.1;
 					};
 				};
 			};
@@ -110,6 +206,7 @@
 			projectRoot = "";
 			targets = (
 				304C0E49251447CB00E831F2 /* pcmplayer */,
+				308BDB00253D2289009DB683 /* test */,
 			);
 		};
 /* End PBXProject section */
@@ -120,6 +217,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				304C0E55251447F500E831F2 /* main.cpp in Sources */,
+				303E8771251B17C0008B7E24 /* AudioDevice.cpp in Sources */,
+				303E8778251B1C31008B7E24 /* CAAudioDevice.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		308BDAFD253D2289009DB683 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				308BDB19253D2542009DB683 /* WavTest.cpp in Sources */,
+				308BDB0D253D22B2009DB683 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,7 +240,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -162,7 +270,6 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -190,7 +297,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -220,7 +327,6 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -251,6 +357,32 @@
 			};
 			name = Release;
 		};
+		308BDB06253D2289009DB683 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					external/Catch2/single_include,
+					src,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		308BDB07253D2289009DB683 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					external/Catch2/single_include,
+					src,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -268,6 +400,15 @@
 			buildConfigurations = (
 				304C0E52251447CB00E831F2 /* Debug */,
 				304C0E53251447CB00E831F2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		308BDB05253D2289009DB683 /* Build configuration list for PBXNativeTarget "test" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				308BDB06253D2289009DB683 /* Debug */,
+				308BDB07253D2289009DB683 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
