@@ -227,7 +227,7 @@ namespace pcmplayer::coreaudio
         streamDescription.mBytesPerPacket = streamDescription.mBytesPerFrame * streamDescription.mFramesPerPacket;
         streamDescription.mReserved = 0;
 
-        sampleFormat = SampleFormat::Float32;
+        sampleFormat = SampleFormat::float32;
         sampleSize = sizeof(float);
 
         if ((result = AudioUnitSetProperty(audioUnit,
@@ -246,7 +246,7 @@ namespace pcmplayer::coreaudio
                                                kAudioUnitScope_Input, bus, &streamDescription, sizeof(streamDescription))) != noErr)
                 throw std::system_error(result, errorCategory, "Failed to set CoreAudio unit stream format");
 
-            sampleFormat = SampleFormat::SignedInt16;
+            sampleFormat = SampleFormat::signedInt16;
             sampleSize = sizeof(std::int16_t);
         }
 

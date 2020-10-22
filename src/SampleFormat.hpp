@@ -5,8 +5,8 @@ namespace pcmplayer
 {
     enum class SampleFormat
     {
-        SignedInt16,
-        Float32
+        signedInt16,
+        float32
     };
 }
 

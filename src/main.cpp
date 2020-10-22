@@ -2,7 +2,11 @@
 #include <fstream>
 #include <string>
 #include "Wav.hpp"
-#include "coreaudio/CAAudioDevice.hpp"
+#if defined(_WIN32)
+#  include "wasapi/WASAPIAudioDevice.hpp"
+#else
+#  include "coreaudio/CAAudioDevice.hpp"
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -38,11 +42,17 @@ int main(int argc, char* argv[])
 
         Wav input(inputFile);
 
+#if defined(_WIN32)
+        pcmplayer::wasapi::AudioDevice audioDevice(512,
+                                                   input.getSampleRate(),
+                                                   pcmplayer::SampleFormat::float32,
+                                                   input.getChannels());
+#else
         pcmplayer::coreaudio::AudioDevice audioDevice(512,
                                                       input.getSampleRate(),
-                                                      pcmplayer::SampleFormat::Float32,
+                                                      pcmplayer::SampleFormat::float32,
                                                       input.getChannels());
-
+#endif
         audioDevice.play(input.getSamples());
     }
     catch (const std::exception& exception)
