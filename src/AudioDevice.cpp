@@ -3,10 +3,10 @@
 namespace pcmplayer
 {
     AudioDevice::AudioDevice(Driver initDriver,
-                             uint32_t initBufferSize,
-                             uint32_t initSampleRate,
+                             std::uint32_t initBufferSize,
+                             std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
-                             uint16_t initChannels):
+                             std::uint16_t initChannels):
         driver(initDriver),
         bufferSize(initBufferSize),
         sampleRate(initSampleRate),
@@ -21,7 +21,7 @@ namespace pcmplayer
         start();
     }
 
-    void AudioDevice::getData(uint32_t frames, std::vector<float>& result)
+    void AudioDevice::getData(std::uint32_t frames, std::vector<float>& result)
     {
         result.clear();
         result.reserve(frames * channels);
