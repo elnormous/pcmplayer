@@ -291,13 +291,13 @@ public:
             {
                 case 8:
                 {
-                    for (std::uint32_t channel = 0; channel < channels; ++channel)
+                    for (std::uint32_t frame = 0; frame < frames; ++frame)
                     {
-                        float* inputChannel = &samples[channel * frames];
+                        float* inputFrame = &samples[frame * channels];
 
-                        for (std::uint32_t frame = 0; frame < frames; ++frame)
+                        for (std::uint32_t channel = 0; channel < channels; ++channel)
                         {
-                            const auto value = static_cast<std::uint8_t>((inputChannel[frame] + 1.0) * 255.0 / 2.0);
+                            const auto value = static_cast<std::uint8_t>((inputFrame[channel] + 1.0) * 255.0 / 2.0);
 
                             auto* destData = &dataChunkBuffer[frame * channels + channel];
                             destData[0] = static_cast<char>(value);
@@ -307,13 +307,13 @@ public:
                 }
                 case 16:
                 {
-                    for (std::uint32_t channel = 0; channel < channels; ++channel)
+                    for (std::uint32_t frame = 0; frame < frames; ++frame)
                     {
-                        float* inputChannel = &samples[channel * frames];
+                        float* inputFrame = &samples[frame * channels];
 
-                        for (std::uint32_t frame = 0; frame < frames; ++frame)
+                        for (std::uint32_t channel = 0; channel < channels; ++channel)
                         {
-                            const auto value = static_cast<std::int32_t>(inputChannel[frame] * 32767.0F);
+                            const auto value = static_cast<std::int32_t>(inputFrame[channel] * 32767.0F);
 
                             auto* destData = &dataChunkBuffer[(frame * channels + channel) * 2];
                             destData[0] = static_cast<char>(value);
@@ -324,13 +324,13 @@ public:
                 }
                 case 24:
                 {
-                    for (std::uint32_t channel = 0; channel < channels; ++channel)
+                    for (std::uint32_t frame = 0; frame < frames; ++frame)
                     {
-                        float* inputChannel = &samples[channel * frames];
+                        float* inputFrame = &samples[frame * channels];
 
-                        for (std::uint32_t frame = 0; frame < frames; ++frame)
+                        for (std::uint32_t channel = 0; channel < channels; ++channel)
                         {
-                            const auto value = static_cast<std::int32_t>(inputChannel[frame] * 2147483647.0);
+                            const auto value = static_cast<std::int32_t>(inputFrame[channel] * 2147483647.0);
 
                             auto* destData = &dataChunkBuffer[(frame * channels + channel) * 3];
                             destData[0] = static_cast<char>(value >> 8);
@@ -342,13 +342,13 @@ public:
                 }
                 case 32:
                 {
-                    for (std::uint32_t channel = 0; channel < channels; ++channel)
+                    for (std::uint32_t frame = 0; frame < frames; ++frame)
                     {
-                        float* inputChannel = &samples[channel * frames];
+                        float* inputFrame = &samples[frame * channels];
 
-                        for (std::uint32_t frame = 0; frame < frames; ++frame)
+                        for (std::uint32_t channel = 0; channel < channels; ++channel)
                         {
-                            const auto value = static_cast<std::int32_t>(inputChannel[frame] * 2147483647.0);
+                            const auto value = static_cast<std::int32_t>(inputFrame[channel] * 2147483647.0);
 
                             auto* destData = &dataChunkBuffer[(frame * channels + channel) * 4];
                             destData[0] = static_cast<char>(value);
@@ -367,13 +367,13 @@ public:
         {
             if (bitsPerSample == 32)
             {
-                for (std::uint32_t channel = 0; channel < channels; ++channel)
+                for (std::uint32_t frame = 0; frame < frames; ++frame)
                 {
-                    float* inputChannel = &samples[channel * frames];
+                    float* inputFrame = &samples[frame * channels];
 
-                    for (std::uint32_t frame = 0; frame < frames; ++frame)
+                    for (std::uint32_t channel = 0; channel < channels; ++channel)
                     {
-                        const auto value = static_cast<float>(inputChannel[frame]);
+                        const auto value = static_cast<float>(inputFrame[channel]);
 
                         auto* destData = &dataChunkBuffer[(frame * channels + channel) * 4];
                         std::memcpy(destData, &value, sizeof(float));
