@@ -10,4 +10,4 @@ namespace pcmplayer
     };
 }
 
-#endif // OUZEL_AUDIO_SAMPLEFORMAT_HPP
+#endif // SAMPLEFORMAT_HPP

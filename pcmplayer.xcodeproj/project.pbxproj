@@ -54,6 +54,7 @@
 		308BDB01253D2289009DB683 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		308BDB0C253D22B2009DB683 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		308BDB18253D2542009DB683 /* WavTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WavTest.cpp; sourceTree = "<group>"; };
+		30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAErrorCategory.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +83,7 @@
 			children = (
 				303E8776251B1C31008B7E24 /* CAAudioDevice.cpp */,
 				303E8777251B1C31008B7E24 /* CAAudioDevice.hpp */,
+				30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */,
 			);
 			path = coreaudio;
 			sourceTree = "<group>";
