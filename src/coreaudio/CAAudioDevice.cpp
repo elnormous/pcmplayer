@@ -295,8 +295,8 @@ namespace pcmplayer::coreaudio
         OSStatus result;
         if ((result = AudioOutputUnitStart(audioUnit)) != noErr)
             throw std::system_error(result, errorCategory, "Failed to start CoreAudio output unit");
-        
-        for (;;) {}
+
+        run();
     }
 
     void AudioDevice::stop()
@@ -304,6 +304,8 @@ namespace pcmplayer::coreaudio
         OSStatus result;
         if ((result = AudioOutputUnitStop(audioUnit)) != noErr)
             throw std::system_error(result, errorCategory, "Failed to stop CoreAudio output unit");
+
+        running = false;
     }
 
     void AudioDevice::outputCallback(AudioBufferList* ioData)
@@ -314,5 +316,12 @@ namespace pcmplayer::coreaudio
             getData(buffer.mDataByteSize / (sampleSize * channels), data);
             std::copy(data.begin(), data.end(), static_cast<float*>(buffer.mData));
         }
+    }
+
+    void AudioDevice::run()
+    {
+        running = true;
+
+        while (running) {}
     }
 }

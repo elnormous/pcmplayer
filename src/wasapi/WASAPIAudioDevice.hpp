@@ -2,7 +2,6 @@
 #define WASAPIAUDIODEVICE_HPP
 
 #include <atomic>
-#include <thread>
 #include <Audioclient.h>
 #include <mmdeviceapi.h>
 #include "../AudioDevice.hpp"

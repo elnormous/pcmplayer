@@ -30,6 +30,5 @@ namespace pcmplayer::coreaudio
         }
     };
 }
-#endif
 
 #endif // CAERRORCATEGORY_HPP
