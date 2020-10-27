@@ -18,7 +18,15 @@ public:
     Wav() = default;
 
     Wav(std::uint16_t c, std::uint32_t sr, std::uint32_t f, const std::vector<float>& s):
-        channels{c}, sampleRate{sr}, frames{f}, samples{s} {}
+        channels{c}, sampleRate{sr}, frames{f}, samples{s}
+    {
+        if (channels < 1)
+            throw std::runtime_error("Invalid channel count");
+        if (sampleRate == 0)
+            throw std::runtime_error("Invalid sample rate");
+        if (s.size() != channels * f)
+            throw std::runtime_error("Invalid sample count");
+    }
 
     Wav(std::istream& input)
     {
@@ -31,13 +39,13 @@ public:
             static_cast<char>(riffHeader[3]) != 'F')
             throw std::runtime_error("Failed to load sound file, not a RIFF format");
 
-        char dataLengthBuffer[4];
-        input.read(dataLengthBuffer, sizeof(dataLengthBuffer));
+        char lengthBuffer[4];
+        input.read(lengthBuffer, sizeof(lengthBuffer));
 
-        const auto length = static_cast<std::uint32_t>(dataLengthBuffer[0] & 0xFFU) |
-            static_cast<std::uint32_t>(static_cast<uint8_t>(dataLengthBuffer[1] & 0xFFU) << 8) |
-            static_cast<std::uint32_t>(static_cast<uint8_t>(dataLengthBuffer[2] & 0xFFU) << 16) |
-            static_cast<std::uint32_t>(static_cast<uint8_t>(dataLengthBuffer[3] & 0xFFU) << 24);
+        const auto length = static_cast<std::uint32_t>(lengthBuffer[0] & 0xFFU) |
+            static_cast<std::uint32_t>(static_cast<uint8_t>(lengthBuffer[1] & 0xFFU) << 8) |
+            static_cast<std::uint32_t>(static_cast<uint8_t>(lengthBuffer[2] & 0xFFU) << 16) |
+            static_cast<std::uint32_t>(static_cast<uint8_t>(lengthBuffer[3] & 0xFFU) << 24);
 
         char waveHeader[4];
         input.read(waveHeader, sizeof(waveHeader));
@@ -77,6 +85,7 @@ public:
             {
                 char formatTagBuffer[2];
                 input.read(formatTagBuffer, sizeof(formatTagBuffer));
+                offset += sizeof(formatTagBuffer);
 
                 formatTag = static_cast<std::uint16_t>((formatTagBuffer[0] & 0xFFU) |
                                                        ((formatTagBuffer[1] & 0xFFU) << 8));
@@ -86,24 +95,46 @@ public:
 
                 char channelsBuffer[2];
                 input.read(channelsBuffer, sizeof(channelsBuffer));
+                offset += sizeof(channelsBuffer);
 
                 channels = static_cast<std::uint16_t>(channelsBuffer[0]) |
                     (static_cast<std::uint16_t>(channelsBuffer[1]) << 8);
 
                 char sampleRateBuffer[4];
                 input.read(sampleRateBuffer, sizeof(sampleRateBuffer));
+                offset += sizeof(sampleRateBuffer);
+
                 sampleRate = (sampleRateBuffer[0] & 0xFFU) |
                     ((sampleRateBuffer[1] & 0xFFU) << 8) |
                     ((sampleRateBuffer[2] & 0xFFU) << 16) |
                     ((sampleRateBuffer[3] & 0xFFU) << 24);
 
                 input.seekg(4, std::ios::cur); // skip byte rate
+                offset += 4;
                 input.seekg(2, std::ios::cur); // skip byte align
+                offset += 2;
 
                 char bitsPerSampleBuffer[2];
                 input.read(bitsPerSampleBuffer, sizeof(bitsPerSampleBuffer));
+                offset += sizeof(bitsPerSampleBuffer);
+
                 bitsPerSample = (bitsPerSampleBuffer[0] & 0xFFU) |
                     ((bitsPerSampleBuffer[1] & 0xFFU) << 8);
+
+                if (formatTag != WAVE_FORMAT_PCM && formatTag != WAVE_FORMAT_IEEE_FLOAT)
+                {
+                    char sizeBuffer[4];
+                    input.read(sizeBuffer, sizeof(sizeBuffer));
+                    offset += sizeof(sizeBuffer);
+
+                    const auto size = (sizeBuffer[0] & 0xFFU) |
+                        ((sizeBuffer[1] & 0xFFU) << 8) |
+                        ((sizeBuffer[2] & 0xFFU) << 16) |
+                        ((sizeBuffer[3] & 0xFFU) << 24);
+
+                    input.seekg(size, std::ios::cur); // skip the additional data
+                    offset += sizeof(size);
+                }
             }
             else if (chunkHeader[0] == 'd' &&
                      chunkHeader[1] == 'a' &&
@@ -217,68 +248,81 @@ public:
                     else
                         throw std::runtime_error("Failed to load sound file, unsupported bit depth");
                 }
+
+                input.seekg(chunkSize, std::ios::cur); // skip the data
+                offset += chunkSize;
+            }
+            else
+            {
+                input.seekg(chunkSize, std::ios::cur); // skip the chunk
+                offset += chunkSize;
             }
 
             // padding
-            offset += ((chunkSize + 1) & 0xFFFFFFFE);
-            input.seekg(offset + sizeof(riffHeader) + sizeof(dataLengthBuffer), std::ios::beg);
+            offset = ((offset + 1) & 0xFFFFFFFE);
+            input.seekg(offset + sizeof(riffHeader) + sizeof(lengthBuffer), std::ios::beg);
         }
     }
 
     void save(std::ostream& output)
     {
-        const std::size_t sampleSize = sizeof(int16_t);
-        //const std::size_t sampleSize = sizeof(float);
+        const std::size_t sampleSize = sizeof(float);
 
         char riffHeader[] = {'R', 'I', 'F', 'F'};
-        std::uint32_t dataLength = 4 + 24 + 8 + static_cast<std::uint32_t>(samples.size() * sampleSize);
-        char dataLengthBuffer[] = {static_cast<char>(dataLength),
+
+        const std::uint32_t waveHeaderSize = 4;
+        const std::uint32_t chunkHeaderSize = 4;
+        const std::uint32_t fmtChunkSize = 16;
+        const std::uint16_t formatTag = WAVE_FORMAT_IEEE_FLOAT;
+        const auto byteRate = static_cast<std::uint32_t>(sampleSize * channels * sampleRate);
+        const std::uint16_t byteAlign = sampleSize * channels;
+        const std::uint16_t bitsPerSample = sampleSize * 8;
+        const auto dataChunkSize = static_cast<std::uint32_t>(samples.size() * sampleSize);
+
+        const std::uint32_t dataLength = waveHeaderSize +
+            chunkHeaderSize +
+            fmtChunkSize +
+            chunkHeaderSize +
+            dataChunkSize;
+
+        const char dataLengthBuffer[] = {static_cast<char>(dataLength),
             static_cast<char>(dataLength >> 8),
             static_cast<char>(dataLength >> 16),
             static_cast<char>(dataLength >> 24)
         };
-        char waveHeader[] = {'W', 'A', 'V', 'E'};
+        const char waveHeader[] = {'W', 'A', 'V', 'E'};
 
-        char fmtChunkHeader[] = {'f', 'm', 't', ' '};
-        std::uint32_t fmtChunkSize = 16;
-        char fmtChunkSizeBuffer[] = {static_cast<char>(fmtChunkSize),
+        const char fmtChunkHeader[] = {'f', 'm', 't', ' '};
+        const char fmtChunkSizeBuffer[] = {static_cast<char>(fmtChunkSize),
             static_cast<char>(fmtChunkSize >> 8),
             static_cast<char>(fmtChunkSize >> 16),
             static_cast<char>(fmtChunkSize >> 24)
         };
-        const std::uint16_t formatTag = WAVE_FORMAT_PCM;
-        //const std::uint16_t formatTag = WAVE_FORMAT_IEEE_FLOAT;
-        char formatTagBuffer[] = {static_cast<char>(formatTag),
+        const char formatTagBuffer[] = {static_cast<char>(formatTag),
             static_cast<char>(formatTag >> 8)
         };
-        char channelsBuffer[] = {static_cast<char>(channels),
+        const char channelsBuffer[] = {static_cast<char>(channels),
             static_cast<char>(channels >> 8)
         };
-        char sampleRateBuffer[] = {static_cast<char>(sampleRate),
+        const char sampleRateBuffer[] = {static_cast<char>(sampleRate),
             static_cast<char>(sampleRate >> 8),
             static_cast<char>(sampleRate >> 16),
             static_cast<char>(sampleRate >> 24)
         };
-
-        const auto byteRate = static_cast<std::uint32_t>(sampleSize * channels * sampleRate);
-        char byteRateBuffer[] = {static_cast<char>(byteRate),
+        const char byteRateBuffer[] = {static_cast<char>(byteRate),
             static_cast<char>(byteRate >> 8),
             static_cast<char>(byteRate >> 16),
             static_cast<char>(byteRate >> 24)
         };
-        const std::uint16_t byteAlign = sampleSize * channels;
-        char byteAlignBuffer[] = {static_cast<char>(byteAlign),
+        const char byteAlignBuffer[] = {static_cast<char>(byteAlign),
             static_cast<char>(byteAlign >> 8)
         };
-        const std::uint16_t bitsPerSample = sampleSize * 8;
-        char bitsPerSampleBuffer[] = {static_cast<char>(bitsPerSample),
+        const char bitsPerSampleBuffer[] = {static_cast<char>(bitsPerSample),
             static_cast<char>(bitsPerSample >> 8)
         };
 
-        char dataChunkHeader[] = {'d', 'a', 't', 'a'};
-        const auto sampleCount = static_cast<std::uint32_t>(samples.size());
-        const auto dataChunkSize = static_cast<std::uint32_t>(sampleCount * sampleSize);
-        char dataChunkSizeBuffer[] = {static_cast<char>(dataChunkSize),
+        const char dataChunkHeader[] = {'d', 'a', 't', 'a'};
+        const char dataChunkSizeBuffer[] = {static_cast<char>(dataChunkSize),
             static_cast<char>(dataChunkSize >> 8),
             static_cast<char>(dataChunkSize >> 16),
             static_cast<char>(dataChunkSize >> 24)

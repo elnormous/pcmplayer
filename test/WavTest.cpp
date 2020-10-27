@@ -113,4 +113,10 @@ TEST_CASE("Decoding", "[decoding]")
         REQUIRE(samples[5] == Approx(0.0F));
     }
 
+TEST_CASE("Encodin", "[encoding]")
+{
+    SECTION("32-bit-float")
+    {
+        Wav wav(2, 48000, 3, {1.0F, 1.0F, -1.0F, -1.0F, 0.0F, 0.0F});
+    }
 }
