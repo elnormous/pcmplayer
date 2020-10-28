@@ -1,5 +1,5 @@
-#ifndef AUDIODEVICE_HPP
-#define AUDIODEVICE_HPP
+#ifndef AUDIOPLAYER_HPP
+#define AUDIOPLAYER_HPP
 
 #include <cstdint>
 #include <functional>
@@ -9,15 +9,15 @@
 
 namespace pcmplayer
 {
-    class AudioDevice
+    class AudioPlayer
     {
     public:
-        AudioDevice(Driver initDriver,
+        AudioPlayer(Driver initDriver,
                     std::uint32_t initBufferSize,
                     std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
                     std::uint16_t initChannels);
-        virtual ~AudioDevice() = default;
+        virtual ~AudioPlayer() = default;
 
         void play(const std::vector<float> s);
 
@@ -40,4 +40,4 @@ namespace pcmplayer
     };
 }
 
-#endif // AUDIODEVICE_HPP
+#endif // AUDIOPLAYER_HPP

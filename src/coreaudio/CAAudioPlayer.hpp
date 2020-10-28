@@ -1,5 +1,5 @@
-#ifndef CAAUDIODEVICE_HPP
-#define CAAUDIODEVICE_HPP
+#ifndef CAAUDIOPLAYER_HPP
+#define CAAUDIOPLAYER_HPP
 
 #include <atomic>
 #if defined(__APPLE__)
@@ -12,18 +12,18 @@
 
 #include <AudioUnit/AudioUnit.h>
 
-#include "../AudioDevice.hpp"
+#include "../AudioPlayer.hpp"
 
 namespace pcmplayer::coreaudio
 {
-    class AudioDevice: public pcmplayer::AudioDevice
+    class AudioPlayer: public pcmplayer::AudioPlayer
     {
     public:
-        AudioDevice(std::uint32_t initBufferSize,
+        AudioPlayer(std::uint32_t initBufferSize,
                     std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
                     std::uint16_t initChannels);
-        ~AudioDevice();
+        ~AudioPlayer();
 
         void start() final;
         void stop() final;
@@ -46,4 +46,4 @@ namespace pcmplayer::coreaudio
     };
 }
 
-#endif // CAAUDIODEVICE_HPP
+#endif // CAAUDIOPLAYER_HPP

@@ -19,18 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AudioDevice.cpp" />
+    <ClCompile Include="src\AudioPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\wasapi\WASAPIAudioDevice.cpp" />
+    <ClCompile Include="src\wasapi\WASAPIAudioPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\AudioDevice.hpp" />
+    <ClInclude Include="src\AudioPlayer.hpp" />
     <ClInclude Include="src\Driver.hpp" />
     <ClInclude Include="src\SampleFormat.hpp" />
-    <ClInclude Include="src\wasapi\WASAPIAudioDevice.hpp" />
+    <ClInclude Include="src\wasapi\WASAPIAudioPlayer.hpp" />
     <ClInclude Include="src\wasapi\WASAPIErrorCategory.hpp" />
     <ClInclude Include="src\wasapi\WASAPIPointer.hpp" />
     <ClInclude Include="src\Wav.hpp" />
+    <ClInclude Include="WASAPIDeviceEnumerator.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

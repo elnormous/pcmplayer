@@ -1,8 +1,8 @@
-#include "AudioDevice.hpp"
+#include "AudioPlayer.hpp"
 
 namespace pcmplayer
 {
-    AudioDevice::AudioDevice(Driver initDriver,
+    AudioPlayer::AudioPlayer(Driver initDriver,
                              std::uint32_t initBufferSize,
                              std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
@@ -15,13 +15,13 @@ namespace pcmplayer
     {
     }
 
-    void AudioDevice::play(const std::vector<float> s)
+    void AudioPlayer::play(const std::vector<float> s)
     {
         samples = s;
         start();
     }
 
-    void AudioDevice::getData(std::uint32_t frames, std::vector<float>& result)
+    void AudioPlayer::getData(std::uint32_t frames, std::vector<float>& result)
     {
         result.clear();
         result.reserve(frames * channels);

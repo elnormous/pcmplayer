@@ -1,22 +1,22 @@
-#ifndef WASAPIAUDIODEVICE_HPP
-#define WASAPIAUDIODEVICE_HPP
+#ifndef WASAPIAUDIOPLAYER_HPP
+#define WASAPIAUDIOPLAYER_HPP
 
 #include <atomic>
 #include <Audioclient.h>
 #include <mmdeviceapi.h>
-#include "../AudioDevice.hpp"
+#include "../AudioPlayer.hpp"
 #include "WASAPIPointer.hpp"
 
 namespace pcmplayer::wasapi
 {
-    class AudioDevice final: public pcmplayer::AudioDevice
+    class AudioPlayer final: public pcmplayer::AudioPlayer
     {
     public:
-        AudioDevice(std::uint32_t initBufferSize,
+        AudioPlayer(std::uint32_t initBufferSize,
                     std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
                     std::uint16_t initChannels);
-        ~AudioDevice() override;
+        ~AudioPlayer() override;
 
         void start() final;
         void stop() final;
@@ -40,4 +40,4 @@ namespace pcmplayer::wasapi
     };
 }
 
-#endif // WASAPIAUDIODEVICE_HPP
+#endif // WASAPIAUDIOPLAYER_HPP

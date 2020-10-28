@@ -1,6 +1,6 @@
 #include <mmdeviceapi.h>
 #include <Functiondiscoverykeys_devpkey.h>
-#include "WASAPIAudioDevice.hpp"
+#include "WASAPIAudioPlayer.hpp"
 #include "WASAPIErrorCategory.hpp"
 
 const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
@@ -111,11 +111,11 @@ namespace pcmplayer::wasapi
         const ErrorCategory errorCategory{};
     }
 
-    AudioDevice::AudioDevice(std::uint32_t initBufferSize,
+    AudioPlayer::AudioPlayer(std::uint32_t initBufferSize,
                              std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
                              std::uint16_t initChannels):
-        pcmplayer::AudioDevice(Driver::wasapi, initBufferSize, initSampleRate, initSampleFormat, initChannels)
+        pcmplayer::AudioPlayer(Driver::wasapi, initBufferSize, initSampleRate, initSampleFormat, initChannels)
     {
         CoInitialize(nullptr);
 
@@ -138,6 +138,11 @@ namespace pcmplayer::wasapi
             IMMDevice* devicePointer;
             if (const auto hr = deviceCollection->Item(i, &devicePointer); FAILED(hr))
                 throw std::system_error(hr, errorCategory, "Failed to get device");
+
+            LPWSTR deviceId;
+            devicePointer->GetId(&deviceId);
+
+            CoTaskMemFree(deviceId);
 
             IPropertyStore* propertyStore;
             if (const auto hr = devicePointer->OpenPropertyStore(STGM_READ, &propertyStore); FAILED(hr))
@@ -258,7 +263,7 @@ namespace pcmplayer::wasapi
             throw std::system_error(hr, errorCategory, "Failed to set event handle");
     }
 
-    AudioDevice::~AudioDevice()
+    AudioPlayer::~AudioPlayer()
     {
         running = false;
         if (notifyEvent) SetEvent(notifyEvent);
@@ -268,7 +273,7 @@ namespace pcmplayer::wasapi
         if (audioClient && started) audioClient->Stop();
     }
 
-    void AudioDevice::start()
+    void AudioPlayer::start()
     {
         if (const auto hr = audioClient->Start(); FAILED(hr))
             throw std::system_error(hr, errorCategory, "Failed to start audio");
@@ -278,7 +283,7 @@ namespace pcmplayer::wasapi
         run();
     }
 
-    void AudioDevice::stop()
+    void AudioPlayer::stop()
     {
         running = false;
 
@@ -291,7 +296,7 @@ namespace pcmplayer::wasapi
         }
     }
 
-    void AudioDevice::run()
+    void AudioPlayer::run()
     {
         while (running)
         {

@@ -1,5 +1,5 @@
 #include <system_error>
-#include "CAAudioDevice.hpp"
+#include "CAAudioPlayer.hpp"
 #include "CAErrorCategory.hpp"
 
 namespace pcmplayer::coreaudio
@@ -28,11 +28,11 @@ namespace pcmplayer::coreaudio
                                 UInt32, UInt32,
                                 AudioBufferList* ioData)
         {
-            pcmplayer::coreaudio::AudioDevice* audioDevice = static_cast<pcmplayer::coreaudio::AudioDevice*>(inRefCon);
+            auto audioPlayer = static_cast<pcmplayer::coreaudio::AudioPlayer*>(inRefCon);
 
             try
             {
-                audioDevice->outputCallback(ioData);
+                audioPlayer->outputCallback(ioData);
             }
             catch (const std::exception& e)
             {
@@ -44,11 +44,11 @@ namespace pcmplayer::coreaudio
         }
     }
 
-    AudioDevice::AudioDevice(std::uint32_t initBufferSize,
+    AudioPlayer::AudioPlayer(std::uint32_t initBufferSize,
                              std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
                              std::uint16_t initChannels):
-        pcmplayer::AudioDevice(Driver::coreAudio, initBufferSize, initSampleRate, initSampleFormat, initChannels)
+        pcmplayer::AudioPlayer(Driver::coreAudio, initBufferSize, initSampleRate, initSampleFormat, initChannels)
     {
 #if TARGET_OS_IOS || TARGET_OS_TV
         id audioSession = reinterpret_cast<id (*)(Class, SEL)>(&objc_msgSend)(objc_getClass("AVAudioSession"), sel_getUid("sharedInstance")); // [AVAudioSession sharedInstance]
@@ -334,7 +334,7 @@ namespace pcmplayer::coreaudio
             throw std::system_error(result, errorCategory, "Failed to initialize CoreAudio unit");
     }
 
-    AudioDevice::~AudioDevice()
+    AudioPlayer::~AudioPlayer()
     {
         if (audioUnit)
         {
@@ -384,7 +384,7 @@ namespace pcmplayer::coreaudio
 #endif
     }
 
-    void AudioDevice::start()
+    void AudioPlayer::start()
     {
         if (const auto result = AudioOutputUnitStart(audioUnit); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to start CoreAudio output unit");
@@ -392,7 +392,7 @@ namespace pcmplayer::coreaudio
         run();
     }
 
-    void AudioDevice::stop()
+    void AudioPlayer::stop()
     {
         if (const auto result = AudioOutputUnitStop(audioUnit); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to stop CoreAudio output unit");
@@ -400,7 +400,7 @@ namespace pcmplayer::coreaudio
         running = false;
     }
 
-    void AudioDevice::outputCallback(AudioBufferList* ioData)
+    void AudioPlayer::outputCallback(AudioBufferList* ioData)
     {
         for (UInt32 i = 0; i < ioData->mNumberBuffers; ++i)
         {
@@ -410,7 +410,7 @@ namespace pcmplayer::coreaudio
         }
     }
 
-    void AudioDevice::run()
+    void AudioPlayer::run()
     {
         running = true;
 

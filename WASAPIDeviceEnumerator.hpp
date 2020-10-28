@@ -1,0 +1,9 @@
+#ifndef WASAPIDEVICEENUMERATOR_HPP
+#define WASAPIDEVICEENUMERATOR_HPP
+
+namespace pcmplayer
+{
+
+}
+
+#endif // WASAPIDEVICEENUMERATOR_HPP
