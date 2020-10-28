@@ -24,6 +24,9 @@
     <ClCompile Include="src\wasapi\WASAPIAudioPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\wasapi\WASAPIDeviceEnumerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\wasapi\WASAPIErrorCategory.hpp">
@@ -41,13 +44,16 @@
     <ClInclude Include="src\Wav.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WASAPIDeviceEnumerator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\AudioPlayer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\wasapi\WASAPIAudioPlayer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AudioDevice.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wasapi\WASAPIDeviceEnumerator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
