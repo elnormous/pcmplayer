@@ -1,3 +1,5 @@
+#include <mmdeviceapi.h>
+#include <Functiondiscoverykeys_devpkey.h>
 #include "WASAPIAudioDevice.hpp"
 #include "WASAPIErrorCategory.hpp"
 
@@ -122,6 +124,44 @@ namespace pcmplayer::wasapi
             throw std::system_error(hr, errorCategory, "Failed to create device enumerator");
 
         enumerator = static_cast<IMMDeviceEnumerator*>(enumeratorPointer);
+
+        IMMDeviceCollection* deviceCollection;
+        if (const auto hr = enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &deviceCollection); FAILED(hr))
+            throw std::system_error(hr, errorCategory, "Failed to enumerate endpoints");
+
+        UINT count;
+        if (const auto hr = deviceCollection->GetCount(&count); FAILED(hr))
+            throw std::system_error(hr, errorCategory, "Failed to get endpoint count");
+
+        for (UINT i = 0; i < count; i++)
+        {
+            IMMDevice* devicePointer;
+            if (const auto hr = deviceCollection->Item(i, &devicePointer); FAILED(hr))
+                throw std::system_error(hr, errorCategory, "Failed to get device");
+
+            IPropertyStore* propertyStore;
+            if (const auto hr = devicePointer->OpenPropertyStore(STGM_READ, &propertyStore); FAILED(hr))
+                throw std::system_error(hr, errorCategory, "Failed to open property store");
+
+            PROPVARIANT nameVariant;
+            PropVariantInit(&nameVariant);
+
+            if (const auto hr = propertyStore->GetValue(PKEY_Device_FriendlyName, &nameVariant); SUCCEEDED(hr))
+            {
+                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, nullptr, 0, nullptr, nullptr);
+                if (bufferSize != 0)
+                {
+                    std::vector<char> name(bufferSize);
+                    //if (WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, name.data(), bufferSize, nullptr, nullptr) != 0)
+                    //    name.data();
+                }
+            }
+
+            PropVariantClear(&nameVariant);
+            propertyStore->Release();
+        }
+
+        deviceCollection->Release();
 
         IMMDevice* devicePointer;
         if (const auto hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &devicePointer); FAILED(hr))
