@@ -112,6 +112,7 @@ TEST_CASE("Decoding", "[decoding]")
         REQUIRE(samples[4] == Approx(0.0F));
         REQUIRE(samples[5] == Approx(0.0F));
     }
+}
 
 TEST_CASE("Encodin", "[encoding]")
 {
