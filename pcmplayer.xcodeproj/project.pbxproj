@@ -58,7 +58,6 @@
 		30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAErrorCategory.hpp; sourceTree = "<group>"; };
 		30F9C43325496293005F93AE /* AudioDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioDevice.hpp; sourceTree = "<group>"; };
 		30F9C43625496590005F93AE /* CADeviceEnumerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CADeviceEnumerator.cpp; sourceTree = "<group>"; };
-		30F9C43725496590005F93AE /* CADeviceEnumerator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CADeviceEnumerator.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +87,6 @@
 				303E8776251B1C31008B7E24 /* CAAudioPlayer.cpp */,
 				303E8777251B1C31008B7E24 /* CAAudioPlayer.hpp */,
 				30F9C43625496590005F93AE /* CADeviceEnumerator.cpp */,
-				30F9C43725496590005F93AE /* CADeviceEnumerator.hpp */,
 				30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */,
 			);
 			path = coreaudio;
@@ -126,14 +124,14 @@
 		304C0E4C251447CB00E831F2 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				303E8775251B1C31008B7E24 /* coreaudio */,
+				30F9C43325496293005F93AE /* AudioDevice.hpp */,
 				303E876D251B17BF008B7E24 /* AudioPlayer.cpp */,
 				303E876E251B17BF008B7E24 /* AudioPlayer.hpp */,
+				303E8775251B1C31008B7E24 /* coreaudio */,
 				303E8770251B17BF008B7E24 /* Driver.hpp */,
 				304C0E54251447F500E831F2 /* main.cpp */,
 				303E876F251B17BF008B7E24 /* SampleFormat.hpp */,
 				304A5B2A2536875900D4E9E3 /* Wav.hpp */,
-				30F9C43325496293005F93AE /* AudioDevice.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";

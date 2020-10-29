@@ -1,13 +1,12 @@
 #include <system_error>
 #include "CAAudioPlayer.hpp"
-#include "CAErrorCategory.hpp"
 
 namespace pcmplayer::coreaudio
 {
+    const ErrorCategory errorCategory {};
+
     namespace
     {
-        const ErrorCategory errorCategory {};
-
 #if TARGET_OS_MAC && !TARGET_OS_IOS && !TARGET_OS_TV
         OSStatus deviceListChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void*)
         {
@@ -44,7 +43,8 @@ namespace pcmplayer::coreaudio
         }
     }
 
-    AudioPlayer::AudioPlayer(std::uint32_t initBufferSize,
+    AudioPlayer::AudioPlayer(std::uint32_t audioDeviceId,
+                             std::uint32_t initBufferSize,
                              std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
                              std::uint16_t initChannels):
@@ -78,80 +78,60 @@ namespace pcmplayer::coreaudio
             kAudioObjectPropertyElementMaster
         };
 
-        UInt32 dataSize;
-        if (const auto result = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject,
-                                                               &deviceListAddress,
-                                                               sizeof(deviceListAddress),
-                                                               nullptr,
-                                                               &dataSize); result != noErr)
-            throw std::system_error(result, errorCategory, "Failed to get CoreAudio property data size");
-
-        const auto deviceCount = dataSize / sizeof(AudioDeviceID);
-        std::vector<AudioDeviceID> deviceIds(deviceCount);
-        if (const auto result = AudioObjectGetPropertyData(kAudioObjectSystemObject,
-                                                           &deviceListAddress,
-                                                           0,
-                                                           nullptr,
-                                                           &dataSize,
-                                                           deviceIds.data()); result != noErr)
-        throw std::system_error(result, errorCategory, "Failed to get CoreAudio output devices");
-
-        for (const auto deviceId : deviceIds)
-        {
-            constexpr AudioObjectPropertyAddress nameAddress = {
-                kAudioObjectPropertyName,
-                kAudioDevicePropertyScopeOutput,
-                kAudioObjectPropertyElementMaster
-            };
-
-            CFStringRef tempStringRef = nullptr;
-            UInt32 size = sizeof(CFStringRef);
-            if (const auto result = AudioObjectGetPropertyData(deviceId,
-                                                               &nameAddress,
-                                                               0,
-                                                               nullptr,
-                                                               &size,
-                                                               &tempStringRef); result != noErr)
-                throw std::system_error(result, errorCategory, "Failed to get CoreAudio device name");
-
-            if (tempStringRef)
-            {
-                std::string name;
-                if (const char* deviceName = CFStringGetCStringPtr(tempStringRef, kCFStringEncodingUTF8))
-                    name = deviceName;
-                else
-                {
-                    const CFIndex stringLength = CFStringGetLength(tempStringRef);
-                    std::vector<char> temp(static_cast<std::size_t>(CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8)) + 1);
-                    if (CFStringGetCString(tempStringRef, temp.data(), static_cast<CFIndex>(temp.size()), kCFStringEncodingUTF8))
-                        name = temp.data();
-                }
-                CFRelease(tempStringRef);
-
-                // std::cout << "Device " << name << " for audio";
-            }
-        }
-
         if (const auto result = AudioObjectAddPropertyListener(kAudioObjectSystemObject,
                                                                &deviceListAddress,
                                                                deviceListChanged,
                                                                this); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to add CoreAudio property listener");
 
-        constexpr AudioObjectPropertyAddress defaultDeviceAddress = {
-            kAudioHardwarePropertyDefaultOutputDevice,
-            kAudioObjectPropertyScopeGlobal,
-            kAudioObjectPropertyElementMaster
-        };
+        if (audioDeviceId == 0)
+        {
+            constexpr AudioObjectPropertyAddress defaultDeviceAddress = {
+                kAudioHardwarePropertyDefaultOutputDevice,
+                kAudioObjectPropertyScopeGlobal,
+                kAudioObjectPropertyElementMaster
+            };
 
-        UInt32 size = sizeof(AudioDeviceID);
-        if (const auto result = AudioObjectGetPropertyData(kAudioObjectSystemObject,
-                                                           &defaultDeviceAddress,
-                                                           0,
-                                                           nullptr,
-                                                           &size,
-                                                           &deviceId); result != noErr)
-            throw std::system_error(result, errorCategory, "Failed to get CoreAudio output device");
+            UInt32 size = sizeof(AudioDeviceID);
+            if (const auto result = AudioObjectGetPropertyData(kAudioObjectSystemObject,
+                                                               &defaultDeviceAddress,
+                                                               0,
+                                                               nullptr,
+                                                               &size,
+                                                               &deviceId); result != noErr)
+                throw std::system_error(result, errorCategory, "Failed to get CoreAudio output device");
+        }
+        else
+        {
+            constexpr AudioObjectPropertyAddress deviceListAddress = {
+                kAudioHardwarePropertyDevices,
+                kAudioObjectPropertyScopeGlobal,
+                kAudioObjectPropertyElementMaster
+            };
+
+            UInt32 dataSize;
+            if (const auto result = AudioObjectGetPropertyDataSize(kAudioObjectSystemObject,
+                                                                   &deviceListAddress,
+                                                                   sizeof(deviceListAddress),
+                                                                   nullptr,
+                                                                   &dataSize); result != noErr)
+                throw std::system_error(result, errorCategory, "Failed to get CoreAudio property data size");
+
+            const auto deviceCount = dataSize / sizeof(AudioDeviceID);
+            std::vector<AudioDeviceID> deviceIds(deviceCount);
+            if (const auto result = AudioObjectGetPropertyData(kAudioObjectSystemObject,
+                                                               &deviceListAddress,
+                                                               0,
+                                                               nullptr,
+                                                               &dataSize,
+                                                               deviceIds.data()); result != noErr)
+            throw std::system_error(result, errorCategory, "Failed to get CoreAudio output devices");
+
+            if (audioDeviceId > deviceIds.size())
+                throw std::runtime_error("Invalid device");
+
+            deviceId = deviceIds[audioDeviceId - 1];
+        }
 
         constexpr AudioObjectPropertyAddress aliveAddress = {
             kAudioDevicePropertyDeviceIsAlive,
@@ -160,12 +140,12 @@ namespace pcmplayer::coreaudio
         };
 
         UInt32 alive = 0;
-        size = sizeof(alive);
+        UInt32 aliveSize = sizeof(alive);
         if (const auto result = AudioObjectGetPropertyData(deviceId,
                                                            &aliveAddress,
                                                            0,
                                                            nullptr,
-                                                           &size,
+                                                           &aliveSize,
                                                            &alive); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to get CoreAudio device status");
 
@@ -179,51 +159,19 @@ namespace pcmplayer::coreaudio
         };
 
         pid_t pid = 0;
-        size = sizeof(pid);
+        UInt32 pidSize = sizeof(pid);
         if (const auto result = AudioObjectGetPropertyData(deviceId,
                                                            &hogModeAddress,
                                                            0,
                                                            nullptr,
-                                                           &size,
+                                                           &pidSize,
                                                            &pid); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to check if CoreAudio device is in hog mode");
 
         if (pid != -1)
             throw std::runtime_error("Requested CoreAudio device is being hogged");
 
-        constexpr AudioObjectPropertyAddress nameAddress = {
-            kAudioObjectPropertyName,
-            kAudioDevicePropertyScopeOutput,
-            kAudioObjectPropertyElementMaster
-        };
-
-        CFStringRef tempStringRef = nullptr;
-        size = sizeof(CFStringRef);
-
-        if (const auto result = AudioObjectGetPropertyData(deviceId,
-                                                           &nameAddress,
-                                                           0,
-                                                           nullptr,
-                                                           &size,
-                                                           &tempStringRef); result != noErr)
-            throw std::system_error(result, errorCategory, "Failed to get CoreAudio device name");
-
-        if (tempStringRef)
-        {
-            std::string name;
-            if (const char* deviceName = CFStringGetCStringPtr(tempStringRef, kCFStringEncodingUTF8))
-                name = deviceName;
-            else
-            {
-                const CFIndex stringLength = CFStringGetLength(tempStringRef);
-                std::vector<char> temp(static_cast<std::size_t>(CFStringGetMaximumSizeForEncoding(stringLength, kCFStringEncodingUTF8)) + 1);
-                if (CFStringGetCString(tempStringRef, temp.data(), static_cast<CFIndex>(temp.size()), kCFStringEncodingUTF8))
-                    name = temp.data();
-            }
-            CFRelease(tempStringRef);
-
-            // std::cout << "Using " << name << " for audio";
-        }
+        //std::cout << "Using " << getDeviceName(deviceId) << " for audio";
 #endif
 
         AudioComponentDescription desc;

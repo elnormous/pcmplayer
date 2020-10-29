@@ -14,10 +14,16 @@ int main(int argc, char* argv[])
     {
         std::string inputFilename;
         std::string outputFilename;
-        uint64_t delay = 0;
+        std::uint32_t outputDeviceId = 0;
+        std::uint64_t delay = 0;
 
         for (int arg = 1; arg < argc; ++arg)
-            if (std::string(argv[arg]) == "--input")
+            if (std::string(argv[arg]) == "--help")
+            {
+                std::cout << "pcmplayer\n";
+                return EXIT_SUCCESS;
+            }
+            else if (std::string(argv[arg]) == "--input")
             {
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
                 inputFilename = argv[arg];
@@ -26,6 +32,23 @@ int main(int argc, char* argv[])
             {
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
                 outputFilename = argv[arg];
+            }
+            else if (std::string(argv[arg]) == "--devices")
+            {
+#if defined(_WIN32)
+                const auto audioDevices = pcmplayer::wasapi::AudioPlayer::getAudioDevices();
+#else
+                const auto audioDevices = pcmplayer::coreaudio::AudioPlayer::getAudioDevices();
+#endif
+                for (const auto& audioDevice : audioDevices)
+                    std::cout << audioDevice.getId() << ":\t" << audioDevice.getName() << '\n';
+
+                return EXIT_SUCCESS;
+            }
+            else if (std::string(argv[arg]) == "--device")
+            {
+                if (++arg >= argc) throw std::runtime_error("Expected a parameter");
+                outputDeviceId = static_cast<std::uint32_t>(std::stoi(argv[arg]));
             }
             else if (std::string(argv[arg]) == "--delay")
             {
@@ -43,12 +66,14 @@ int main(int argc, char* argv[])
         Wav input(inputFile);
 
 #if defined(_WIN32)
-        pcmplayer::wasapi::AudioPlayer audioPlayer(512,
+        pcmplayer::wasapi::AudioPlayer audioPlayer(outputDeviceId,
+                                                   512,
                                                    input.getSampleRate(),
                                                    pcmplayer::SampleFormat::float32,
                                                    input.getChannels());
 #else
-        pcmplayer::coreaudio::AudioPlayer audioPlayer(512,
+        pcmplayer::coreaudio::AudioPlayer audioPlayer(outputDeviceId,
+                                                      512,
                                                       input.getSampleRate(),
                                                       pcmplayer::SampleFormat::float32,
                                                       input.getChannels());

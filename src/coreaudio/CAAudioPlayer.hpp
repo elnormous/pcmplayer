@@ -13,13 +13,18 @@
 #include <AudioUnit/AudioUnit.h>
 
 #include "../AudioPlayer.hpp"
+#include "../AudioDevice.hpp"
+#include "CAErrorCategory.hpp"
 
 namespace pcmplayer::coreaudio
 {
+    extern const ErrorCategory errorCategory;
+
     class AudioPlayer: public pcmplayer::AudioPlayer
     {
     public:
-        AudioPlayer(std::uint32_t initBufferSize,
+        AudioPlayer(std::uint32_t audioDeviceId,
+                    std::uint32_t initBufferSize,
                     std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
                     std::uint16_t initChannels);
@@ -29,6 +34,9 @@ namespace pcmplayer::coreaudio
         void stop() final;
 
         void outputCallback(AudioBufferList* ioData);
+
+        static std::string getDeviceName(AudioDeviceID deviceId);
+        static std::vector<AudioDevice> getAudioDevices();
 
     private:
         void run();
