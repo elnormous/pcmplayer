@@ -8,8 +8,31 @@
 #  include "coreaudio/CAAudioPlayer.hpp"
 #endif
 
+#if defined(_WIN32)
+class WindowsApplication final
+{
+public:
+    WindowsApplication()
+    {
+        CoInitialize(nullptr);
+    }
+
+    ~WindowsApplication()
+    {
+        CoUninitialize();
+    }
+
+    WindowsApplication(const WindowsApplication&) = delete;
+    WindowsApplication& operator=(const WindowsApplication&) = delete;
+};
+#endif
+
 int main(int argc, char* argv[])
 {
+#if defined(_WIN32)
+    WindowsApplication application;
+#endif
+
     try
     {
         std::string inputFilename;

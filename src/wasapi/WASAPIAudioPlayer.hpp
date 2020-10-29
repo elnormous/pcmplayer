@@ -2,17 +2,23 @@
 #define WASAPIAUDIOPLAYER_HPP
 
 #include <atomic>
+#include <vector>
 #include <Audioclient.h>
 #include <mmdeviceapi.h>
 #include "../AudioPlayer.hpp"
+#include "../AudioDevice.hpp"
 #include "WASAPIPointer.hpp"
+#include "WASAPIErrorCategory.hpp"
 
 namespace pcmplayer::wasapi
 {
+    extern const ErrorCategory errorCategory;
+
     class AudioPlayer final: public pcmplayer::AudioPlayer
     {
     public:
-        AudioPlayer(std::uint32_t initBufferSize,
+        AudioPlayer(std::uint32_t audioDeviceId,
+                    std::uint32_t initBufferSize,
                     std::uint32_t initSampleRate,
                     SampleFormat initSampleFormat,
                     std::uint16_t initChannels);
@@ -21,7 +27,10 @@ namespace pcmplayer::wasapi
         void start() final;
         void stop() final;
 
+        static std::vector<AudioDevice> getAudioDevices();
+
     private:
+        static std::string getDeviceName(IMMDevice* device);
         void run();
 
         Pointer<IMMDeviceEnumerator> enumerator;

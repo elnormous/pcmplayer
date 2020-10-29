@@ -3,8 +3,6 @@
 
 namespace pcmplayer::coreaudio
 {
-    const ErrorCategory errorCategory {};
-
     namespace
     {
 #if TARGET_OS_MAC && !TARGET_OS_IOS && !TARGET_OS_TV
@@ -42,6 +40,8 @@ namespace pcmplayer::coreaudio
             return noErr;
         }
     }
+
+    const ErrorCategory errorCategory {};
 
     AudioPlayer::AudioPlayer(std::uint32_t audioDeviceId,
                              std::uint32_t initBufferSize,

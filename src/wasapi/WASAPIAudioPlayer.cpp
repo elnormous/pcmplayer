@@ -1,7 +1,4 @@
-#include <mmdeviceapi.h>
-#include <Functiondiscoverykeys_devpkey.h>
 #include "WASAPIAudioPlayer.hpp"
-#include "WASAPIErrorCategory.hpp"
 
 const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
@@ -107,72 +104,52 @@ namespace pcmplayer::wasapi
         private:
             LONG refCount = 1;
         };
-
-        const ErrorCategory errorCategory{};
     }
 
-    AudioPlayer::AudioPlayer(std::uint32_t initBufferSize,
+    const ErrorCategory errorCategory{};
+
+    AudioPlayer::AudioPlayer(std::uint32_t audioDeviceId,
+                             std::uint32_t initBufferSize,
                              std::uint32_t initSampleRate,
                              SampleFormat initSampleFormat,
                              std::uint16_t initChannels):
         pcmplayer::AudioPlayer(Driver::wasapi, initBufferSize, initSampleRate, initSampleFormat, initChannels)
     {
-        CoInitialize(nullptr);
-
         LPVOID enumeratorPointer;
         if (const auto hr = CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr, CLSCTX_ALL, IID_IMMDeviceEnumerator, &enumeratorPointer); FAILED(hr))
             throw std::system_error(hr, errorCategory, "Failed to create device enumerator");
 
         enumerator = static_cast<IMMDeviceEnumerator*>(enumeratorPointer);
 
-        IMMDeviceCollection* deviceCollection;
-        if (const auto hr = enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &deviceCollection); FAILED(hr))
-            throw std::system_error(hr, errorCategory, "Failed to enumerate endpoints");
-
-        UINT count;
-        if (const auto hr = deviceCollection->GetCount(&count); FAILED(hr))
-            throw std::system_error(hr, errorCategory, "Failed to get endpoint count");
-
-        for (UINT i = 0; i < count; i++)
+        if (audioDeviceId == 0)
         {
             IMMDevice* devicePointer;
-            if (const auto hr = deviceCollection->Item(i, &devicePointer); FAILED(hr))
+            if (const auto hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &devicePointer); FAILED(hr))
+                throw std::system_error(hr, errorCategory, "Failed to get audio endpoint");
+
+            device = devicePointer;
+        }
+        else
+        {
+            IMMDeviceCollection* deviceCollectionPointer;
+            if (const auto hr = enumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &deviceCollectionPointer); FAILED(hr))
+                throw std::system_error(hr, errorCategory, "Failed to enumerate endpoints");
+
+           Pointer<IMMDeviceCollection> deviceCollection = deviceCollectionPointer;
+
+            UINT count;
+            if (const auto hr = deviceCollection->GetCount(&count); FAILED(hr))
+                throw std::system_error(hr, errorCategory, "Failed to get endpoint count");
+
+            if (audioDeviceId > count)
+                throw std::runtime_error("Invalid device");
+
+            IMMDevice* devicePointer;
+            if (const auto hr = deviceCollection->Item(audioDeviceId - 1, &devicePointer); FAILED(hr))
                 throw std::system_error(hr, errorCategory, "Failed to get device");
 
-            LPWSTR deviceId;
-            devicePointer->GetId(&deviceId);
-
-            CoTaskMemFree(deviceId);
-
-            IPropertyStore* propertyStore;
-            if (const auto hr = devicePointer->OpenPropertyStore(STGM_READ, &propertyStore); FAILED(hr))
-                throw std::system_error(hr, errorCategory, "Failed to open property store");
-
-            PROPVARIANT nameVariant;
-            PropVariantInit(&nameVariant);
-
-            if (const auto hr = propertyStore->GetValue(PKEY_Device_FriendlyName, &nameVariant); SUCCEEDED(hr))
-            {
-                int bufferSize = WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, nullptr, 0, nullptr, nullptr);
-                if (bufferSize != 0)
-                {
-                    std::vector<char> name(bufferSize);
-                    //if (WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, name.data(), bufferSize, nullptr, nullptr) != 0)
-                    //    name.data();
-                }
-            }
-
-            PropVariantClear(&nameVariant);
-            propertyStore->Release();
+            device = devicePointer;
         }
-
-        deviceCollection->Release();
-
-        IMMDevice* devicePointer;
-        if (const auto hr = enumerator->GetDefaultAudioEndpoint(eRender, eConsole, &devicePointer); FAILED(hr))
-            throw std::system_error(hr, errorCategory, "Failed to get audio endpoint");
-
-        device = devicePointer;
 
         notificationClient = new NotificationClient();
 

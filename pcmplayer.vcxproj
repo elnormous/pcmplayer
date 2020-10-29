@@ -30,7 +30,6 @@
     <ClInclude Include="src\Driver.hpp" />
     <ClInclude Include="src\SampleFormat.hpp" />
     <ClInclude Include="src\wasapi\WASAPIAudioPlayer.hpp" />
-    <ClInclude Include="src\wasapi\WASAPIDeviceEnumerator.hpp" />
     <ClInclude Include="src\wasapi\WASAPIErrorCategory.hpp" />
     <ClInclude Include="src\wasapi\WASAPIPointer.hpp" />
     <ClInclude Include="src\Wav.hpp" />

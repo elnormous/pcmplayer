@@ -2,6 +2,7 @@
 #define CAAUDIOPLAYER_HPP
 
 #include <atomic>
+#include <vector>
 #if defined(__APPLE__)
 #  include <TargetConditionals.h>
 #endif
@@ -35,10 +36,10 @@ namespace pcmplayer::coreaudio
 
         void outputCallback(AudioBufferList* ioData);
 
-        static std::string getDeviceName(AudioDeviceID deviceId);
         static std::vector<AudioDevice> getAudioDevices();
 
     private:
+        static std::string getDeviceName(AudioDeviceID deviceId);
         void run();
 
 #if TARGET_OS_MAC && !TARGET_OS_IOS && !TARGET_OS_TV

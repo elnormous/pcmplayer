@@ -53,8 +53,5 @@
     <ClInclude Include="src\AudioDevice.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\wasapi\WASAPIDeviceEnumerator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
