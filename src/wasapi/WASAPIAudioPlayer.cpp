@@ -242,9 +242,6 @@ namespace pcmplayer::wasapi
 
     AudioPlayer::~AudioPlayer()
     {
-        running = false;
-        if (notifyEvent) SetEvent(notifyEvent);
-
         if (notifyEvent) CloseHandle(notifyEvent);
 
         if (audioClient && started) audioClient->Stop();
@@ -256,14 +253,11 @@ namespace pcmplayer::wasapi
             throw std::system_error(hr, errorCategory, "Failed to start audio");
 
         started = true;
-        running = true;
         run();
     }
 
     void AudioPlayer::stop()
     {
-        running = false;
-
         if (started)
         {
             if (const auto hr = audioClient->Stop(); FAILED(hr))
@@ -275,7 +269,7 @@ namespace pcmplayer::wasapi
 
     void AudioPlayer::run()
     {
-        while (running)
+        for (;;)
         {
             try
             {
@@ -285,8 +279,6 @@ namespace pcmplayer::wasapi
 
                 if (result == WAIT_OBJECT_0)
                 {
-                    if (!running) break;
-
                     UINT32 bufferPadding;
                     if (const auto hr = audioClient->GetCurrentPadding(&bufferPadding); FAILED(hr))
                         throw std::system_error(hr, errorCategory, "Failed to get buffer padding");

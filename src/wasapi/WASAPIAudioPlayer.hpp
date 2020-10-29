@@ -1,7 +1,6 @@
 #ifndef WASAPIAUDIOPLAYER_HPP
 #define WASAPIAUDIOPLAYER_HPP
 
-#include <atomic>
 #include <vector>
 #include <Audioclient.h>
 #include <mmdeviceapi.h>
@@ -44,8 +43,6 @@ namespace pcmplayer::wasapi
         std::uint32_t sampleSize = 0;
         bool started = false;
         std::vector<float> data;
-
-        std::atomic_bool running{false};
     };
 }
 

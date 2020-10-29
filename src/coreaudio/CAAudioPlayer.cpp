@@ -334,6 +334,8 @@ namespace pcmplayer::coreaudio
 
     void AudioPlayer::start()
     {
+        running = true;
+
         if (const auto result = AudioOutputUnitStart(audioUnit); result != noErr)
             throw std::system_error(result, errorCategory, "Failed to start CoreAudio output unit");
 
@@ -353,15 +355,22 @@ namespace pcmplayer::coreaudio
         for (UInt32 i = 0; i < ioData->mNumberBuffers; ++i)
         {
             AudioBuffer& buffer = ioData->mBuffers[i];
-            getData(buffer.mDataByteSize / (sampleSize * channels), data);
+            bool hasMoreData = getData(buffer.mDataByteSize / (sampleSize * channels), data);
             std::copy(data.begin(), data.end(), static_cast<float*>(buffer.mData));
+
+            if (!hasMoreData)
+            {
+                std::unique_lock<std::mutex> lock(runningMutex);
+                running = false;
+                lock.unlock();
+                runningCondition.notify_all();
+            }
         }
     }
 
     void AudioPlayer::run()
     {
-        running = true;
-
-        while (running) {}
+        std::unique_lock<std::mutex> lock(runningMutex);
+        while (running) runningCondition.wait(lock);
     }
 }

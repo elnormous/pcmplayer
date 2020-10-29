@@ -1,7 +1,8 @@
 #ifndef CAAUDIOPLAYER_HPP
 #define CAAUDIOPLAYER_HPP
 
-#include <atomic>
+#include <condition_variable>
+#include <mutex>
 #include <vector>
 #if defined(__APPLE__)
 #  include <TargetConditionals.h>
@@ -51,7 +52,9 @@ namespace pcmplayer::coreaudio
         std::uint32_t sampleSize = 0;
         std::vector<float> data;
 
-        std::atomic_bool running{false};
+        std::mutex runningMutex;
+        std::condition_variable runningCondition;
+        bool running = false;
     };
 }
 
