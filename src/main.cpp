@@ -101,7 +101,10 @@ int main(int argc, char* argv[])
                                                       pcmplayer::SampleFormat::float32,
                                                       input.getChannels());
 #endif
-        audioPlayer.play(input.getSamples());
+        std::vector<float> buffer(delay * input.getChannels());
+        buffer.insert(buffer.end(), input.getSamples().begin(), input.getSamples().end());
+
+        audioPlayer.play(buffer);
     }
     catch (const std::exception& exception)
     {
