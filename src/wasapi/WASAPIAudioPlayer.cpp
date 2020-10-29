@@ -298,12 +298,15 @@ namespace pcmplayer::wasapi
                         if (const auto hr = renderClient->GetBuffer(frameCount, &renderBuffer); FAILED(hr))
                             throw std::system_error(hr, errorCategory, "Failed to get buffer");
 
-                        getData(frameCount, data);
+                        bool hasMoreData = getData(frameCount, data);
 
                         std::copy(data.begin(), data.end(), reinterpret_cast<float*>(renderBuffer));
 
                         if (const auto hr = renderClient->ReleaseBuffer(frameCount, 0); FAILED(hr))
                             throw std::system_error(hr, errorCategory, "Failed to release buffer");
+
+                        if (!hasMoreData)
+                            return;
                     }
                 }
             }

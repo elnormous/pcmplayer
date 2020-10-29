@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
         std::string inputFilename;
         std::string outputFilename;
         std::uint32_t outputDeviceId = 0;
-        std::uint64_t delay = 0;
+        std::size_t delay = 0;
 
         for (int arg = 1; arg < argc; ++arg)
             if (std::string(argv[arg]) == "--help")
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
             else if (std::string(argv[arg]) == "--delay")
             {
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
-                delay = std::strtoull(argv[arg], nullptr, 10);
+                delay = static_cast<size_t>(std::stoi(argv[arg], nullptr, 10));
             }
 
         if (inputFilename.empty())

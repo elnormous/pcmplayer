@@ -25,7 +25,7 @@ namespace pcmplayer
         virtual void start() = 0;
         virtual void stop() = 0;
 
-        void getData(std::uint32_t frames, std::vector<float>& result);
+        bool getData(std::uint32_t frames, std::vector<float>& result);
 
         Driver driver;
 
