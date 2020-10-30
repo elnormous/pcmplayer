@@ -24,9 +24,6 @@
     <ClCompile Include="src\wasapi\WASAPIAudioPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\wasapi\WASAPIDeviceEnumerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\wasapi\WASAPIErrorCategory.hpp">

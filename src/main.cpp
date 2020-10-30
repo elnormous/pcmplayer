@@ -14,7 +14,8 @@ class Com final
 public:
     Com()
     {
-        CoInitialize(nullptr);
+        if (const auto hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); FAILED(hr))
+            throw std::system_error(hr, std::system_category(), "Failed to initialize COM");
     }
 
     ~Com()

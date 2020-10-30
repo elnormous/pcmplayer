@@ -22,7 +22,6 @@
     <ClCompile Include="src\AudioPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\wasapi\WASAPIAudioPlayer.cpp" />
-    <ClCompile Include="src\wasapi\WASAPIDeviceEnumerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AudioDevice.hpp" />

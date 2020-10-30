@@ -29,7 +29,6 @@ namespace pcmplayer::wasapi
         static std::vector<AudioDevice> getAudioDevices();
 
     private:
-        static std::string getDeviceName(IMMDevice* device);
         void run();
 
         Pointer<IMMDeviceEnumerator> enumerator;
