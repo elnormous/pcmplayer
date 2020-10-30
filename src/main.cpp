@@ -86,7 +86,10 @@ int main(int argc, char* argv[])
             if (!outputFile)
                 throw std::runtime_error("Failed to open " + outputFilename);
 
-            Wav output(input.getChannels(), input.getSampleRate(), buffer.size() / input.getChannels(), buffer);
+            Wav output(input.getChannels(),
+                       input.getSampleRate(),
+                       static_cast<std::uint32_t>(buffer.size() / input.getChannels()),
+                       buffer);
             output.save(outputFile);
 
         }
