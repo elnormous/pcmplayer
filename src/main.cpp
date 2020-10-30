@@ -17,6 +17,12 @@ int main(int argc, char* argv[])
 
     try
     {
+        enum class Output
+        {
+            file,
+            device
+        };
+        Output output;
         std::string inputFilename;
         std::string outputFilename;
         std::uint32_t outputDeviceId = 0;
@@ -33,10 +39,11 @@ int main(int argc, char* argv[])
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
                 inputFilename = argv[arg];
             }
-            else if (std::string(argv[arg]) == "--output")
+            else if (std::string(argv[arg]) == "--output-file")
             {
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
                 outputFilename = argv[arg];
+                output = Output::file;
             }
             else if (std::string(argv[arg]) == "--devices")
             {
@@ -50,10 +57,11 @@ int main(int argc, char* argv[])
 
                 return EXIT_SUCCESS;
             }
-            else if (std::string(argv[arg]) == "--device")
+            else if (std::string(argv[arg]) == "--output-device")
             {
                 if (++arg >= argc) throw std::runtime_error("Expected a parameter");
                 outputDeviceId = static_cast<std::uint32_t>(std::stoi(argv[arg]));
+                output = Output::device;
             }
             else if (std::string(argv[arg]) == "--delay")
             {
@@ -69,24 +77,37 @@ int main(int argc, char* argv[])
             throw std::runtime_error("Failed to open " + inputFilename);
 
         Wav input(inputFile);
-
-#if defined(_WIN32)
-        pcmplayer::wasapi::AudioPlayer audioPlayer(outputDeviceId,
-                                                   512,
-                                                   input.getSampleRate(),
-                                                   pcmplayer::SampleFormat::float32,
-                                                   input.getChannels());
-#else
-        pcmplayer::coreaudio::AudioPlayer audioPlayer(outputDeviceId,
-                                                      512,
-                                                      input.getSampleRate(),
-                                                      pcmplayer::SampleFormat::float32,
-                                                      input.getChannels());
-#endif
         std::vector<float> buffer(delay * input.getChannels());
         buffer.insert(buffer.end(), input.getSamples().begin(), input.getSamples().end());
 
-        audioPlayer.play(buffer);
+        if (output == Output::file)
+        {
+            std::ofstream outputFile(outputFilename, std::ios::binary | std::ios::trunc);
+            if (!outputFile)
+                throw std::runtime_error("Failed to open " + outputFilename);
+
+            Wav output(input.getChannels(), input.getSampleRate(), buffer.size() / input.getChannels(), buffer);
+            output.save(outputFile);
+
+        }
+        else if (output == Output::device)
+        {
+#if defined(_WIN32)
+            pcmplayer::wasapi::AudioPlayer audioPlayer(outputDeviceId,
+                                                       512,
+                                                       input.getSampleRate(),
+                                                       pcmplayer::SampleFormat::float32,
+                                                       input.getChannels());
+#else
+            pcmplayer::coreaudio::AudioPlayer audioPlayer(outputDeviceId,
+                                                          512,
+                                                          input.getSampleRate(),
+                                                          pcmplayer::SampleFormat::float32,
+                                                          input.getChannels());
+#endif
+
+            audioPlayer.play(buffer);
+        }
     }
     catch (const std::exception& exception)
     {

@@ -1,6 +1,7 @@
 #ifndef COM_HPP
 #define COM_HPP
 
+#include <system_error>
 #include <Combaseapi.h>
 
 namespace pcmplayer
