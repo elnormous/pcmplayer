@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AudioPlayer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\wasapi\WASAPIAudioPlayer.cpp" />
   </ItemGroup>
