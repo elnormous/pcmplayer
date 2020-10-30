@@ -4,34 +4,15 @@
 #include "Wav.hpp"
 #if defined(_WIN32)
 #  include "wasapi/WASAPIAudioPlayer.hpp"
+#  include "windows/Com.hpp"
 #else
 #  include "coreaudio/CAAudioPlayer.hpp"
-#endif
-
-#if defined(_WIN32)
-class Com final
-{
-public:
-    Com()
-    {
-        if (const auto hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED); FAILED(hr))
-            throw std::system_error(hr, std::system_category(), "Failed to initialize COM");
-    }
-
-    ~Com()
-    {
-        CoUninitialize();
-    }
-
-    Com(const Com&) = delete;
-    Com& operator=(const Com&) = delete;
-};
 #endif
 
 int main(int argc, char* argv[])
 {
 #if defined(_WIN32)
-    Com com;
+    pcmplayer::Com com;
 #endif
 
     try

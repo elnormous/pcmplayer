@@ -32,6 +32,7 @@
     <ClInclude Include="src\wasapi\WASAPIErrorCategory.hpp" />
     <ClInclude Include="src\wasapi\WASAPIPointer.hpp" />
     <ClInclude Include="src\Wav.hpp" />
+    <ClInclude Include="src\windows\Com.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
