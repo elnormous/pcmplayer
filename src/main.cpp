@@ -9,28 +9,28 @@
 #endif
 
 #if defined(_WIN32)
-class WindowsApplication final
+class Com final
 {
 public:
-    WindowsApplication()
+    Com()
     {
         CoInitialize(nullptr);
     }
 
-    ~WindowsApplication()
+    ~Com()
     {
         CoUninitialize();
     }
 
-    WindowsApplication(const WindowsApplication&) = delete;
-    WindowsApplication& operator=(const WindowsApplication&) = delete;
+    Com(const Com&) = delete;
+    Com& operator=(const Com&) = delete;
 };
 #endif
 
 int main(int argc, char* argv[])
 {
 #if defined(_WIN32)
-    WindowsApplication application;
+    Com com;
 #endif
 
     try
