@@ -15,7 +15,6 @@
 		304C0E55251447F500E831F2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 304C0E54251447F500E831F2 /* main.cpp */; };
 		308BDB0D253D22B2009DB683 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 308BDB0C253D22B2009DB683 /* main.cpp */; };
 		308BDB19253D2542009DB683 /* WavTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 308BDB18253D2542009DB683 /* WavTest.cpp */; };
-		30F9C43825496590005F93AE /* CADeviceEnumerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30F9C43625496590005F93AE /* CADeviceEnumerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,7 +56,6 @@
 		308BDB18253D2542009DB683 /* WavTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WavTest.cpp; sourceTree = "<group>"; };
 		30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = CAErrorCategory.hpp; sourceTree = "<group>"; };
 		30F9C43325496293005F93AE /* AudioDevice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = AudioDevice.hpp; sourceTree = "<group>"; };
-		30F9C43625496590005F93AE /* CADeviceEnumerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CADeviceEnumerator.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +84,6 @@
 			children = (
 				303E8776251B1C31008B7E24 /* CAAudioPlayer.cpp */,
 				303E8777251B1C31008B7E24 /* CAAudioPlayer.hpp */,
-				30F9C43625496590005F93AE /* CADeviceEnumerator.cpp */,
 				30BE78782543A97F00046CA5 /* CAErrorCategory.hpp */,
 			);
 			path = coreaudio;
@@ -224,7 +221,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				304C0E55251447F500E831F2 /* main.cpp in Sources */,
-				30F9C43825496590005F93AE /* CADeviceEnumerator.cpp in Sources */,
 				303E8771251B17C0008B7E24 /* AudioPlayer.cpp in Sources */,
 				303E8778251B1C31008B7E24 /* CAAudioPlayer.cpp in Sources */,
 			);

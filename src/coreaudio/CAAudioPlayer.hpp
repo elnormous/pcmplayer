@@ -20,8 +20,6 @@
 
 namespace pcmplayer::coreaudio
 {
-    extern const ErrorCategory errorCategory;
-
     class AudioPlayer: public pcmplayer::AudioPlayer
     {
     public:
@@ -40,7 +38,6 @@ namespace pcmplayer::coreaudio
         static std::vector<AudioDevice> getAudioDevices();
 
     private:
-        static std::string getDeviceName(AudioDeviceID deviceId);
         void run();
 
 #if TARGET_OS_MAC && !TARGET_OS_IOS && !TARGET_OS_TV

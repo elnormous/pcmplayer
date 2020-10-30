@@ -11,8 +11,6 @@
 
 namespace pcmplayer::wasapi
 {
-    extern const ErrorCategory errorCategory;
-
     class AudioPlayer final: public pcmplayer::AudioPlayer
     {
     public:
