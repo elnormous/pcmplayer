@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
             file,
             device
         };
-        Output output;
+        Output output = Output::device;
         std::string inputFilename;
         std::string outputFilename;
         std::uint32_t outputDeviceId = 0;
