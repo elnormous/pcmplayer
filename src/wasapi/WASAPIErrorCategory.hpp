@@ -12,7 +12,7 @@ namespace pcmplayer::wasapi
     public:
         const char* name() const noexcept final
         {
-            return "DirectSound";
+            return "WASAPI";
         }
 
         std::string message(int condition) const final
