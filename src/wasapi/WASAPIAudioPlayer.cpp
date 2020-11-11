@@ -334,11 +334,11 @@ namespace pcmplayer::wasapi
                 int bufferSize = WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, nullptr, 0, nullptr, nullptr);
                 if (bufferSize != 0)
                 {
-                    std::vector<char> name(bufferSize);
-                    if (WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, name.data(), bufferSize, nullptr, nullptr) != 0)
+                    auto name = std::make_unique<char[]>(bufferSize);
+                    if (WideCharToMultiByte(CP_UTF8, 0, nameVariant.pwszVal, -1, name.get(), bufferSize, nullptr, nullptr) != 0)
                     {
                         PropVariantClear(&nameVariant);
-                        return name.data();
+                        return name.get();
                     }
                 }
             }
